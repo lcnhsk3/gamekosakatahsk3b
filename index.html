@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HSK3 Vocabulary Practice Game</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .chapter-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .chapter-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .chapter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .mode-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .mode-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .identity-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .player-info {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .game-area {
+            display: none;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 12px;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 3px solid #e9ecef;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .sentence-example {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .sentence-example h4 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .results h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .final-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 30px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .mode-selection {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .chapter-selection {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <main class="container">
+   <header class="header">
+    <h1 id="game-title">HSK3 Vocabulary Practice Game</h1>
+   </header>
+   <div class="content">
+    <div id="identity-screen" class="identity-form">
+     <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Identitas Pemain</h2>
+     <div class="form-group"><label for="player-name">Nama:</label> <input type="text" id="player-name" placeholder="Masukkan nama Anda" required>
+     </div>
+     <div class="form-group"><label for="player-class">Kelas:</label> <input type="text" id="player-class" placeholder="Masukkan kelas Anda" required>
+     </div>
+     <div class="form-group"><label for="player-school">Sekolah/Universitas:</label> <input type="text" id="player-school" placeholder="Masukkan nama sekolah/universitas" required>
+     </div><button class="start-btn" onclick="showChapterSelection()">Mulai Game</button>
+    </div>
+    <div id="menu" class="menu" style="display: none;"><button class="back-btn" onclick="backToIdentity()">← Kembali ke Identitas</button>
+     <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Pilih Bab:</h2>
+     <div class="chapter-selection"><button class="chapter-btn" onclick="selectChapter(11)">BAB 11</button> <button class="chapter-btn" onclick="selectChapter(12)">BAB 12</button> <button class="chapter-btn" onclick="selectChapter(13)">BAB 13</button> <button class="chapter-btn" onclick="selectChapter(14)">BAB 14</button> <button class="chapter-btn" onclick="selectChapter(15)">BAB 15</button> <button class="chapter-btn" onclick="selectChapter(16)">BAB 16</button> <button class="chapter-btn" onclick="selectChapter(17)">BAB 17</button> <button class="chapter-btn" onclick="selectChapter(18)">BAB 18</button> <button class="chapter-btn" onclick="selectChapter(19)">BAB 19</button> <button class="chapter-btn" onclick="selectChapter(20)">BAB 20</button>
+     </div>
+     <div id="mode-selection" class="mode-selection" style="display: none;"><button class="back-btn" onclick="backToChapterSelection()">← Kembali ke Pilihan Bab</button> <button class="mode-btn" onclick="showIdentityForm('hanzi-indonesia')">Hanzi → Indonesia</button> <button class="mode-btn" onclick="showIdentityForm('indonesia-hanzi')">Indonesia → Hanzi</button> <button class="mode-btn" onclick="showIdentityForm('complete-sentence')">Melengkapi Kalimat</button>
+     </div>
+    </div>
+    <div id="game-area" class="game-area"><button class="back-btn" onclick="backToModeSelection()">← Kembali ke Pilihan Mode</button>
+     <div id="player-info" class="player-info">
+      <div class="player-name" id="display-player-name"></div>
+      <div style="font-size: 0.9rem; color: #666; margin-top: 5px;"><span id="display-player-class"></span> - <span id="display-player-school"></span>
+      </div>
+     </div>
+     <div class="game-header">
+      <div class="timer"><span id="timer-label">Waktu Tersisa</span>: <span id="timer">10</span>s
+      </div>
+      <div class="score"><span id="score-label">Skor</span>: <span id="score">0</span>/<span id="total">0</span>
+      </div>
+     </div>
+     <div class="question-card">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="sentence-example" class="sentence-example" style="display: none;">
+       <h4>Contoh Kalimat:</h4>
+       <p id="sentence-text"></p>
+      </div>
+     </div>
+    </div>
+    <div id="results" class="results">
+     <h2>Selesai!</h2>
+     <div id="final-score" class="final-score"></div><button class="restart-btn" onclick="restartGame()">Main Lagi</button>
+    </div>
+   </div>
+  </main>
+  <script>
+        // Vocabulary data for all chapters
+        const vocabularyData = {
+            11: {
+                "图书馆": { 
+                    indonesia: "perpustakaan", 
+                    sentence: "我每天都去图书馆看书。(Wǒ měitiān dōu qù túshūguǎn kàn shū.) - Saya pergi ke perpustakaan setiap hari untuk membaca buku.",
+                    completeSentence: { question: "我每天都去___看书。", answer: "图书馆", options: ["图书馆", "学校", "商店", "医院", "银行", "公园"] }
+                },
+                "借": { 
+                    indonesia: "meminjam", 
+                    sentence: "我想借这本书。(Wǒ xiǎng jiè zhè běn shū.) - Saya ingin meminjam buku ini.",
+                    completeSentence: { question: "我想___这本书。", answer: "借", options: ["借", "买", "看", "写", "卖", "找"] }
+                },
+                "词典": { 
+                    indonesia: "kamus", 
+                    sentence: "这本词典很有用。(Zhè běn cídiǎn hěn yǒuyòng.) - Kamus ini sangat berguna.",
+                    completeSentence: { question: "这本___很有用。", answer: "词典", options: ["词典", "书", "杂志", "报纸", "小说", "教材"] }
+                },
+                "还": { 
+                    indonesia: "mengembalikan", 
+                    sentence: "明天我要还书。(Míngtiān wǒ yào huán shū.) - Besok saya akan mengembalikan buku.",
+                    completeSentence: { question: "明天我要___书。", answer: "还", options: ["还", "借", "买", "看", "写", "找"] }
+                },
+                "灯": { 
+                    indonesia: "lampu", 
+                    sentence: "请开灯。(Qǐng kāi dēng.) - Tolong nyalakan lampu.",
+                    completeSentence: { question: "请开___。", answer: "灯", options: ["灯", "门", "窗", "电视", "音乐", "书"] }
+                },
+                "会议": { 
+                    indonesia: "rapat", 
+                    sentence: "今天有一个重要的会议。(Jīntiān yǒu yīgè zhòngyào de huìyì.) - Hari ini ada rapat penting.",
+                    completeSentence: { question: "今天有一个重要的___。", answer: "会议", options: ["会议", "考试", "活动", "比赛", "聚会", "课程"] }
+                },
+                "结束": { 
+                    indonesia: "selesai", 
+                    sentence: "会议结束了。(Huìyì jiéshù le.) - Rapat sudah selesai.",
+                    completeSentence: { question: "会议___了。", answer: "结束", options: ["结束", "开始", "继续", "取消", "推迟", "准备"] }
+                },
+                "忘记": { 
+                    indonesia: "lupa", 
+                    sentence: "我忘记带钥匙了。(Wǒ wàngjì dài yàoshi le.) - Saya lupa membawa kunci.",
+                    completeSentence: { question: "我___带钥匙了。", answer: "忘记", options: ["忘记", "记得", "想起", "决定", "准备", "开始"] }
+                },
+                "空调": { 
+                    indonesia: "AC", 
+                    sentence: "天气热，开空调吧。(Tiānqì rè, kāi kòngtiáo ba.) - Cuaca panas, nyalakan AC.",
+                    completeSentence: { question: "天气热，开___吧。", answer: "空调", options: ["空调", "电扇", "窗户", "门", "灯", "电视"] }
+                },
+                "关": { 
+                    indonesia: "menutup", 
+                    sentence: "请关门。(Qǐng guān mén.) - Tolong tutup pintu.",
+                    completeSentence: { question: "请___门。", answer: "关", options: ["关", "开", "锁", "敲", "推", "拉"] }
+                },
+                "地铁": { 
+                    indonesia: "kereta bawah tanah", 
+                    sentence: "我坐地铁上班。(Wǒ zuò dìtiě shàngbān.) - Saya naik kereta bawah tanah ke kantor.",
+                    completeSentence: { question: "我坐___上班。", answer: "地铁", options: ["地铁", "公交", "出租车", "自行车", "汽车", "火车"] }
+                },
+                "双": { 
+                    indonesia: "pasang", 
+                    sentence: "我买了一双鞋。(Wǒ mǎi le yī shuāng xié.) - Saya membeli sepasang sepatu.",
+                    completeSentence: { question: "我买了一___鞋。", answer: "双", options: ["双", "只", "个", "件", "条", "本"] }
+                },
+                "筷子": { 
+                    indonesia: "sumpit", 
+                    sentence: "中国人用筷子吃饭。(Zhōngguórén yòng kuàizi chīfàn.) - Orang Cina makan menggunakan sumpit.",
+                    completeSentence: { question: "中国人用___吃饭。", answer: "筷子", options: ["筷子", "勺子", "叉子", "手", "刀", "盘子"] }
+                },
+                "啤酒": { 
+                    indonesia: "bir", 
+                    sentence: "他喜欢喝啤酒。(Tā xǐhuān hē píjiǔ.) - Dia suka minum bir.",
+                    completeSentence: { question: "他喜欢喝___。", answer: "啤酒", options: ["啤酒", "茶", "咖啡", "水", "果汁", "牛奶"] }
+                },
+                "口": { 
+                    indonesia: "mulut", 
+                    sentence: "张开口。(Zhāngkāi kǒu.) - Buka mulut.",
+                    completeSentence: { question: "张开___。", answer: "口", options: ["口", "眼", "手", "门", "窗", "书"] }
+                },
+                "瓶子": { 
+                    indonesia: "botol", 
+                    sentence: "这个瓶子很漂亮。(Zhège píngzi hěn piàoliang.) - Botol ini sangat cantik.",
+                    completeSentence: { question: "这个___很漂亮。", answer: "瓶子", options: ["瓶子", "杯子", "盘子", "碗", "桌子", "椅子"] }
+                },
+                "笔记本": { 
+                    indonesia: "buku catatan", 
+                    sentence: "我用笔记本记录重要信息。(Wǒ yòng bǐjìběn jìlù zhòngyào xìnxī.) - Saya menggunakan buku catatan untuk mencatat informasi penting.",
+                    completeSentence: { question: "我用___记录重要信息。", answer: "笔记本", options: ["笔记本", "电脑", "手机", "纸", "书", "杂志"] }
+                },
+                "电子邮件": { 
+                    indonesia: "email", 
+                    sentence: "请发电子邮件给我。(Qǐng fā diànzǐ yóujiàn gěi wǒ.) - Tolong kirim email kepada saya.",
+                    completeSentence: { question: "请发___给我。", answer: "电子邮件", options: ["电子邮件", "短信", "信", "照片", "文件", "礼物"] }
+                },
+                "习惯": { 
+                    indonesia: "kebiasaan", 
+                    sentence: "早起是个好习惯。(Zǎoqǐ shì gè hǎo xíguàn.) - Bangun pagi adalah kebiasaan yang baik.",
+                    completeSentence: { question: "早起是个好___。", answer: "习惯", options: ["习惯", "想法", "办法", "机会", "时间", "地方"] }
+                }
+            },
+            12: {
+                "太阳": { indonesia: "matahari", sentence: "太阳很大。(Tàiyáng hěn dà.) - Matahari sangat besar." },
+                "西": { indonesia: "barat", sentence: "太阳从西边落下。(Tàiyáng cóng xībiān luòxià.) - Matahari terbenam di barat." },
+                "生气": { indonesia: "marah", sentence: "他很生气。(Tā hěn shēngqì.) - Dia sangat marah." },
+                "行李箱": { indonesia: "koper", sentence: "我的行李箱很重。(Wǒ de xínglǐxiāng hěn zhòng.) - Koper saya sangat berat." },
+                "自己": { indonesia: "sendiri", sentence: "我自己做饭。(Wǒ zìjǐ zuòfàn.) - Saya memasak sendiri." },
+                "包": { indonesia: "tas", sentence: "这个包很好看。(Zhège bāo hěn hǎokàn.) - Tas ini sangat bagus." },
+                "发现": { indonesia: "menemukan", sentence: "我发现了一个问题。(Wǒ fāxiàn le yīgè wèntí.) - Saya menemukan sebuah masalah." },
+                "护照": { indonesia: "paspor", sentence: "出国需要护照。(Chūguó xūyào hùzhào.) - Pergi ke luar negeri memerlukan paspor." },
+                "起飞": { indonesia: "lepas landas", sentence: "飞机准备起飞。(Fēijī zhǔnbèi qǐfēi.) - Pesawat bersiap lepas landas." },
+                "司机": { indonesia: "sopir", sentence: "司机开车很小心。(Sījī kāichē hěn xiǎoxīn.) - Sopir mengemudi dengan hati-hati." },
+                "教": { indonesia: "mengajar", sentence: "老师教我们中文。(Lǎoshī jiāo wǒmen zhōngwén.) - Guru mengajar kami bahasa Cina." },
+                "画": { indonesia: "menggambar", sentence: "她喜欢画画。(Tā xǐhuān huàhuà.) - Dia suka menggambar." },
+                "需要": { indonesia: "memerlukan", sentence: "我需要帮助。(Wǒ xūyào bāngzhù.) - Saya memerlukan bantuan." },
+                "黑板": { indonesia: "papan tulis", sentence: "老师在黑板上写字。(Lǎoshī zài hēibǎn shàng xiězì.) - Guru menulis di papan tulis." }
+            },
+            13: {
+                "终于": { indonesia: "akhirnya", sentence: "我终于找到了我的钥匙。(Wǒ zhōngyú zhǎodào le wǒ de yàoshi.) - Saya akhirnya menemukan kunci saya." },
+                "爷爷": { indonesia: "kakek", sentence: "我的爷爷很健康。(Wǒ de yéye hěn jiànkāng.) - Kakek saya sangat sehat." },
+                "礼物": { indonesia: "hadiah", sentence: "这是给你的礼物。(Zhè shì gěi nǐ de lǐwù.) - Ini adalah hadiah untuk kamu." },
+                "奶奶": { indonesia: "nenek", sentence: "奶奶做的饭很好吃。(Nǎinai zuò de fàn hěn hǎochī.) - Masakan nenek sangat enak." },
+                "遇到": { indonesia: "bertemu", sentence: "我在路上遇到了老朋友。(Wǒ zài lùshàng yùdào le lǎo péngyǒu.) - Saya bertemu teman lama di jalan." },
+                "一边": { indonesia: "sambil", sentence: "他一边吃饭一边看电视。(Tā yībiān chīfàn yībiān kàn diànshì.) - Dia makan sambil menonton TV." },
+                "过去": { indonesia: "masa lalu", sentence: "过去的事情就让它过去吧。(Guòqù de shìqíng jiù ràng tā guòqù ba.) - Biarkan hal-hal masa lalu berlalu." },
+                "愿意": { indonesia: "bersedia", sentence: "我愿意帮助你。(Wǒ yuànyì bāngzhù nǐ.) - Saya bersedia membantu kamu." },
+                "起来": { indonesia: "bangun", sentence: "快起来，要迟到了！(Kuài qǐlái, yào chídào le!) - Cepat bangun, akan terlambat!" },
+                "应该": { indonesia: "seharusnya", sentence: "你应该早点睡觉。(Nǐ yīnggāi zǎodiǎn shuìjiào.) - Kamu seharusnya tidur lebih awal." },
+                "生活": { indonesia: "kehidupan", sentence: "我喜欢这里的生活。(Wǒ xǐhuān zhèlǐ de shēnghuó.) - Saya suka kehidupan di sini." },
+                "校长": { indonesia: "kepala sekolah", sentence: "校长很关心学生。(Xiàozhǎng hěn guānxīn xuéshēng.) - Kepala sekolah sangat peduli dengan siswa." },
+                "坏": { indonesia: "rusak/buruk", sentence: "我的手机坏了。(Wǒ de shǒujī huài le.) - Handphone saya rusak." },
+                "经常": { indonesia: "sering", sentence: "我经常去图书馆。(Wǒ jīngcháng qù túshūguǎn.) - Saya sering pergi ke perpustakaan." },
+                "一般": { indonesia: "biasanya", sentence: "我一般七点起床。(Wǒ yībān qī diǎn qǐchuáng.) - Saya biasanya bangun jam tujuh." }
+            },
+            14: {
+                "打扫": { indonesia: "membersihkan", sentence: "我每天打扫房间。(Wǒ měitiān dǎsǎo fángjiān.) - Saya membersihkan kamar setiap hari." },
+                "干净": { indonesia: "bersih", sentence: "这个房间很干净。(Zhège fángjiān hěn gānjìng.) - Kamar ini sangat bersih." },
+                "然后": { indonesia: "kemudian", sentence: "我先吃饭，然后看电视。(Wǒ xiān chīfàn, ránhòu kàn diànshì.) - Saya makan dulu, kemudian menonton TV." },
+                "冰箱": { indonesia: "kulkas", sentence: "牛奶在冰箱里。(Niúnǎi zài bīngxiāng lǐ.) - Susu ada di dalam kulkas." },
+                "洗澡": { indonesia: "mandi", sentence: "我每天晚上洗澡。(Wǒ měitiān wǎnshàng xǐzǎo.) - Saya mandi setiap malam." },
+                "节目": { indonesia: "acara", sentence: "这个电视节目很有趣。(Zhège diànshì jiémù hěn yǒuqù.) - Acara TV ini sangat menarik." },
+                "月亮": { indonesia: "bulan", sentence: "今晚的月亮很圆。(Jīnwǎn de yuèliàng hěn yuán.) - Bulan malam ini sangat bulat." },
+                "像": { indonesia: "seperti", sentence: "他像他的父亲。(Tā xiàng tā de fùqīn.) - Dia seperti ayahnya." },
+                "盘子": { indonesia: "piring", sentence: "请洗这些盘子。(Qǐng xǐ zhèxiē pánzi.) - Tolong cuci piring-piring ini." },
+                "刮风": { indonesia: "berangin", sentence: "今天刮风了。(Jīntiān guāfēng le.) - Hari ini berangin." },
+                "叔叔": { indonesia: "paman", sentence: "我叔叔是医生。(Wǒ shūshu shì yīshēng.) - Paman saya adalah dokter." },
+                "阿姨": { indonesia: "bibi", sentence: "阿姨对我很好。(Āyí duì wǒ hěn hǎo.) - Bibi sangat baik kepada saya." },
+                "故意": { indonesia: "sengaja", sentence: "他故意不来。(Tā gùyì bù lái.) - Dia sengaja tidak datang." },
+                "声音": { indonesia: "suara", sentence: "你的声音很好听。(Nǐ de shēngyīn hěn hǎotīng.) - Suara kamu sangat bagus." },
+                "菜单": { indonesia: "menu", sentence: "请给我看菜单。(Qǐng gěi wǒ kàn càidān.) - Tolong tunjukkan menu kepada saya." },
+                "简单": { indonesia: "sederhana", sentence: "这个问题很简单。(Zhège wèntí hěn jiǎndān.) - Masalah ini sangat sederhana." },
+                "香蕉": { indonesia: "pisang", sentence: "我喜欢吃香蕉。(Wǒ xǐhuān chī xiāngjiāo.) - Saya suka makan pisang." }
+            },
+            15: {
+                "留学": { indonesia: "belajar di luar negeri", sentence: "我想去中国留学。(Wǒ xiǎng qù Zhōngguó liúxué.) - Saya ingin belajar di Cina." },
+                "水平": { indonesia: "tingkat", sentence: "我的中文水平不高。(Wǒ de zhōngwén shuǐpíng bù gāo.) - Tingkat bahasa Cina saya tidak tinggi." },
+                "提高": { indonesia: "meningkatkan", sentence: "我要提高我的中文水平。(Wǒ yào tígāo wǒ de zhōngwén shuǐpíng.) - Saya ingin meningkatkan tingkat bahasa Cina saya." },
+                "练习": { indonesia: "berlatih", sentence: "我每天练习说中文。(Wǒ měitiān liànxí shuō zhōngwén.) - Saya berlatih berbicara bahasa Cina setiap hari." },
+                "完成": { indonesia: "menyelesaikan", sentence: "我完成了作业。(Wǒ wánchéng le zuòyè.) - Saya telah menyelesaikan PR." },
+                "句子": { indonesia: "kalimat", sentence: "这个句子很长。(Zhège jùzi hěn cháng.) - Kalimat ini sangat panjang." },
+                "其他": { indonesia: "lainnya", sentence: "还有其他问题吗？(Hái yǒu qítā wèntí ma?) - Apakah ada pertanyaan lainnya?" },
+                "发": { indonesia: "mengirim", sentence: "请发短信给我。(Qǐng fā duǎnxìn gěi wǒ.) - Tolong kirim SMS kepada saya." },
+                "要求": { indonesia: "meminta", sentence: "老师要求我们写作文。(Lǎoshī yāoqiú wǒmen xiě zuòwén.) - Guru meminta kami menulis karangan." },
+                "注意": { indonesia: "memperhatikan", sentence: "请注意安全。(Qǐng zhùyì ānquán.) - Tolong perhatikan keselamatan." },
+                "上网": { indonesia: "online", sentence: "我喜欢上网聊天。(Wǒ xǐhuān shàngwǎng liáotiān.) - Saya suka chatting online." },
+                "除了": { indonesia: "selain", sentence: "除了中文，我还学英文。(Chúle zhōngwén, wǒ hái xué yīngwén.) - Selain bahasa Cina, saya juga belajar bahasa Inggris." },
+                "新闻": { indonesia: "berita", sentence: "我每天看新闻。(Wǒ měitiān kàn xīnwén.) - Saya menonton berita setiap hari." },
+                "花": { indonesia: "bunga", sentence: "这些花很漂亮。(Zhèxiē huā hěn piàoliang.) - Bunga-bunga ini sangat cantik." },
+                "极了": { indonesia: "sangat", sentence: "今天热极了。(Jīntiān rè jí le.) - Hari ini sangat panas." },
+                "节日": { indonesia: "hari raya", sentence: "春节是中国的传统节日。(Chūnjié shì Zhōngguó de chuántǒng jiérì.) - Imlek adalah hari raya tradisional Cina." },
+                "举行": { indonesia: "mengadakan", sentence: "学校举行运动会。(Xuéxiào jǔxíng yùndònghuì.) - Sekolah mengadakan olimpiade olahraga." },
+                "世界": { indonesia: "dunia", sentence: "世界很大。(Shìjiè hěn dà.) - Dunia sangat besar." },
+                "街道": { indonesia: "jalan", sentence: "这条街道很宽。(Zhè tiáo jiēdào hěn kuān.) - Jalan ini sangat lebar." },
+                "各": { indonesia: "masing-masing", sentence: "各国都有自己的文化。(Gè guó dōu yǒu zìjǐ de wénhuà.) - Masing-masing negara memiliki budayanya sendiri." },
+                "文化": { indonesia: "budaya", sentence: "中国文化很有趣。(Zhōngguó wénhuà hěn yǒuqù.) - Budaya Cina sangat menarik." }
+            },
+            16: {
+                "城市": { indonesia: "kota", sentence: "北京是一个大城市。(Běijīng shì yīgè dà chéngshì.) - Beijing adalah kota besar." },
+                "如果": { indonesia: "jika", sentence: "如果下雨，我就不去了。(Rúguǒ xiàyǔ, wǒ jiù bù qù le.) - Jika hujan, saya tidak akan pergi." },
+                "认为": { indonesia: "menganggap", sentence: "我认为这个想法很好。(Wǒ rènwéi zhège xiǎngfǎ hěn hǎo.) - Saya menganggap ide ini sangat bagus." },
+                "皮鞋": { indonesia: "sepatu kulit", sentence: "他穿着黑色的皮鞋。(Tā chuānzhe hēisè de píxié.) - Dia memakai sepatu kulit hitam." },
+                "帽子": { indonesia: "topi", sentence: "这顶帽子很好看。(Zhè dǐng màozi hěn hǎokàn.) - Topi ini sangat bagus." },
+                "长": { indonesia: "panjang", sentence: "这条路很长。(Zhè tiáo lù hěn cháng.) - Jalan ini sangat panjang." },
+                "可爱": { indonesia: "lucu", sentence: "这只小猫很可爱。(Zhè zhī xiǎo māo hěn kě'ài.) - Kucing kecil ini sangat lucu." },
+                "米": { indonesia: "meter", sentence: "这个房间长五米。(Zhège fángjiān cháng wǔ mǐ.) - Kamar ini panjangnya lima meter." },
+                "公斤": { indonesia: "kilogram", sentence: "这个箱子重十公斤。(Zhège xiāngzi zhòng shí gōngjīn.) - Kotak ini beratnya sepuluh kilogram." },
+                "鼻子": { indonesia: "hidung", sentence: "他的鼻子很高。(Tā de bízi hěn gāo.) - Hidungnya sangat mancung." },
+                "头发": { indonesia: "rambut", sentence: "她的头发很长。(Tā de tóufǎ hěn cháng.) - Rambutnya sangat panjang." },
+                "检查": { indonesia: "memeriksa", sentence: "医生检查了我的身体。(Yīshēng jiǎnchá le wǒ de shēntǐ.) - Dokter memeriksa tubuh saya." },
+                "刷牙": { indonesia: "sikat gigi", sentence: "我每天早上刷牙。(Wǒ měitiān zǎoshàng shuāyá.) - Saya sikat gigi setiap pagi." },
+                "关系": { indonesia: "hubungan", sentence: "我们的关系很好。(Wǒmen de guānxì hěn hǎo.) - Hubungan kami sangat baik." },
+                "别人": { indonesia: "orang lain", sentence: "不要管别人的事。(Bùyào guǎn biérén de shì.) - Jangan mengurus urusan orang lain." },
+                "词语": { indonesia: "kata", sentence: "这个词语很难懂。(Zhège cíyǔ hěn nán dǒng.) - Kata ini sangat sulit dipahami." }
+            },
+            17: {
+                "请假": { indonesia: "izin tidak masuk", sentence: "我明天要请假。(Wǒ míngtiān yào qǐngjià.) - Saya akan izin tidak masuk besok." },
+                "一共": { indonesia: "total", sentence: "一共多少钱？(Yīgòng duōshǎo qián?) - Total berapa uang?" },
+                "邻居": { indonesia: "tetangga", sentence: "我的邻居很友好。(Wǒ de línjū hěn yǒuhǎo.) - Tetangga saya sangat ramah." },
+                "后来": { indonesia: "kemudian", sentence: "后来他就走了。(Hòulái tā jiù zǒu le.) - Kemudian dia pergi." },
+                "爱好": { indonesia: "hobi", sentence: "我的爱好是看书。(Wǒ de àihào shì kàn shū.) - Hobi saya adalah membaca buku." },
+                "办法": { indonesia: "cara", sentence: "我想不出好办法。(Wǒ xiǎng bù chū hǎo bànfǎ.) - Saya tidak bisa memikirkan cara yang baik." },
+                "饱": { indonesia: "kenyang", sentence: "我吃饱了。(Wǒ chī bǎo le.) - Saya sudah kenyang." },
+                "为了": { indonesia: "untuk", sentence: "为了学好中文，我每天练习。(Wèile xué hǎo zhōngwén, wǒ měitiān liànxí.) - Untuk belajar bahasa Cina dengan baik, saya berlatih setiap hari." },
+                "决定": { indonesia: "memutuskan", sentence: "我决定去中国留学。(Wǒ juédìng qù Zhōngguó liúxué.) - Saya memutuskan untuk belajar di Cina." },
+                "选择": { indonesia: "memilih", sentence: "你可以选择你喜欢的颜色。(Nǐ kěyǐ xuǎnzé nǐ xǐhuān de yánsè.) - Kamu bisa memilih warna yang kamu suka." },
+                "冬天": { indonesia: "musim dingin", sentence: "冬天很冷。(Dōngtiān hěn lěng.) - Musim dingin sangat dingin." },
+                "必须": { indonesia: "harus", sentence: "你必须按时完成作业。(Nǐ bìxū ànshí wánchéng zuòyè.) - Kamu harus menyelesaikan PR tepat waktu." },
+                "根据": { indonesia: "berdasarkan", sentence: "根据天气预报，明天会下雨。(Gēnjù tiānqì yùbào, míngtiān huì xiàyǔ.) - Berdasarkan ramalan cuaca, besok akan hujan." },
+                "情况": { indonesia: "situasi", sentence: "现在的情况很复杂。(Xiànzài de qíngkuàng hěn fùzá.) - Situasi sekarang sangat rumit." },
+                "口": { indonesia: "mulut", sentence: "张开口说话。(Zhāngkāi kǒu shuōhuà.) - Buka mulut untuk berbicara." },
+                "渴": { indonesia: "haus", sentence: "我很渴，想喝水。(Wǒ hěn kě, xiǎng hē shuǐ.) - Saya sangat haus, ingin minum air." }
+            },
+            18: {
+                "向": { indonesia: "ke arah", sentence: "他向我走来。(Tā xiàng wǒ zǒu lái.) - Dia berjalan ke arah saya." },
+                "万": { indonesia: "sepuluh ribu", sentence: "这辆车要十万块钱。(Zhè liàng chē yào shí wán kuài qián.) - Mobil ini harganya seratus ribu yuan." },
+                "只": { indonesia: "hanya", sentence: "我只有一个苹果。(Wǒ zhǐ yǒu yīgè píngguǒ.) - Saya hanya punya satu apel." },
+                "嘴": { indonesia: "mulut", sentence: "他的嘴很大。(Tā de zuǐ hěn dà.) - Mulutnya sangat besar." },
+                "动物": { indonesia: "hewan", sentence: "我喜欢小动物。(Wǒ xǐhuān xiǎo dòngwù.) - Saya suka hewan kecil." },
+                "段": { indonesia: "bagian", sentence: "这段路很难走。(Zhè duàn lù hěn nán zǒu.) - Bagian jalan ini sangat sulit dilalui." },
+                "补单": { indonesia: "melengkapi", sentence: "请补单这些信息。(Qǐng bǔdān zhèxiē xìnxī.) - Tolong lengkapi informasi ini." },
+                "而且": { indonesia: "dan juga", sentence: "他很聪明，而且很努力。(Tā hěn cōngmíng, érqiě hěn nǔlì.) - Dia sangat pintar, dan juga sangat rajin." },
+                "有名": { indonesia: "terkenal", sentence: "这个地方很有名。(Zhège dìfāng hěn yǒumíng.) - Tempat ini sangat terkenal." },
+                "同意": { indonesia: "setuju", sentence: "我同意你的看法。(Wǒ tóngyì nǐ de kànfǎ.) - Saya setuju dengan pendapat kamu." },
+                "相信": { indonesia: "percaya", sentence: "我相信你能做到。(Wǒ xiāngxìn nǐ néng zuòdào.) - Saya percaya kamu bisa melakukannya." },
+                "关于": { indonesia: "tentang", sentence: "这本书是关于历史的。(Zhè běn shū shì guānyú lìshǐ de.) - Buku ini tentang sejarah." },
+                "机会": { indonesia: "kesempatan", sentence: "这是一个好机会。(Zhè shì yīgè hǎo jīhuì.) - Ini adalah kesempatan yang baik." },
+                "国家": { indonesia: "negara", sentence: "中国是一个大国家。(Zhōngguó shì yīgè dà guójiā.) - Cina adalah negara besar." },
+                "种": { indonesia: "jenis", sentence: "这种水果很甜。(Zhè zhǒng shuǐguǒ hěn tián.) - Jenis buah ini sangat manis." },
+                "特点": { indonesia: "ciri khas", sentence: "每个人都有自己的特点。(Měi gèrén dōu yǒu zìjǐ de tèdiǎn.) - Setiap orang memiliki ciri khasnya sendiri." },
+                "奇怪": { indonesia: "aneh", sentence: "这件事很奇怪。(Zhè jiàn shì hěn qíguài.) - Hal ini sangat aneh." },
+                "地": { indonesia: "tempat", sentence: "这是一个好地方。(Zhè shì yīgè hǎo dìfāng.) - Ini adalah tempat yang baik." }
+            },
+            19: {
+                "耳朵": { indonesia: "telinga", sentence: "我的耳朵疼。(Wǒ de ěrduǒ téng.) - Telinga saya sakit." },
+                "脸": { indonesia: "wajah", sentence: "她的脸很漂亮。(Tā de liǎn hěn piàoliang.) - Wajahnya sangat cantik." },
+                "短": { indonesia: "pendek", sentence: "这条裙子太短了。(Zhè tiáo qúnzi tài duǎn le.) - Rok ini terlalu pendek." },
+                "马": { indonesia: "kuda", sentence: "我会骑马。(Wǒ huì qí mǎ.) - Saya bisa naik kuda." },
+                "张": { indonesia: "lembar", sentence: "给我一张纸。(Gěi wǒ yī zhāng zhǐ.) - Berikan saya selembar kertas." },
+                "位": { indonesia: "orang (sopan)", sentence: "这位老师很好。(Zhè wèi lǎoshī hěn hǎo.) - Guru ini sangat baik." },
+                "蓝": { indonesia: "biru", sentence: "天空是蓝色的。(Tiānkōng shì lán sè de.) - Langit berwarna biru." },
+                "秋天": { indonesia: "musim gugur", sentence: "秋天的叶子很美。(Qiūtiān de yèzi hěn měi.) - Daun musim gugur sangat indah." },
+                "过": { indonesia: "melewati", sentence: "我们过了这座桥。(Wǒmen guò le zhè zuò qiáo.) - Kami melewati jembatan ini." },
+                "鸟": { indonesia: "burung", sentence: "树上有很多鸟。(Shù shàng yǒu hěnduō niǎo.) - Di pohon ada banyak burung." },
+                "哭": { indonesia: "menangis", sentence: "小孩在哭。(Xiǎohái zài kū.) - Anak kecil sedang menangis." },
+                "黄河": { indonesia: "Sungai Kuning", sentence: "黄河是中国的大河。(Huánghé shì Zhōngguó de dà hé.) - Sungai Kuning adalah sungai besar di Cina." },
+                "船": { indonesia: "kapal", sentence: "我们坐船过河。(Wǒmen zuò chuán guò hé.) - Kami naik kapal menyeberangi sungai." },
+                "经过": { indonesia: "melewati", sentence: "我经过你家门口。(Wǒ jīngguò nǐ jiā ménkǒu.) - Saya melewati depan rumah kamu." }
+            },
+            20: {
+                "照相机": { indonesia: "kamera", sentence: "我买了一台新照相机。(Wǒ mǎi le yī tái xīn zhàoxiàngjī.) - Saya membeli kamera baru." },
+                "被": { indonesia: "oleh (pasif)", sentence: "他被老师批评了。(Tā bèi lǎoshī pīpíng le.) - Dia dikritik oleh guru." },
+                "难过": { indonesia: "sedih", sentence: "听到这个消息我很难过。(Tīngdào zhège xiāoxī wǒ hěn nánguò.) - Mendengar berita ini saya sangat sedih." },
+                "东": { indonesia: "timur", sentence: "太阳从东边升起。(Tàiyáng cóng dōngbiān shēngqǐ.) - Matahari terbit dari timur." },
+                "信用卡": { indonesia: "kartu kredit", sentence: "我可以用信用卡付款吗？(Wǒ kěyǐ yòng xìnyòngkǎ fùkuǎn ma?) - Bisakah saya bayar dengan kartu kredit?" },
+                "关心": { indonesia: "peduli", sentence: "父母很关心孩子。(Fùmǔ hěn guānxīn háizi.) - Orang tua sangat peduli dengan anak." },
+                "只有...才": { indonesia: "hanya...baru", sentence: "只有努力学习才能成功。(Zhǐyǒu nǔlì xuéxí cái néng chénggōng.) - Hanya dengan belajar keras baru bisa berhasil." },
+                "成绩": { indonesia: "nilai", sentence: "我的考试成绩很好。(Wǒ de kǎoshì chéngjì hěn hǎo.) - Nilai ujian saya sangat baik." },
+                "碗": { indonesia: "mangkuk", sentence: "请给我一个碗。(Qǐng gěi wǒ yīgè wǎn.) - Tolong berikan saya sebuah mangkuk." },
+                "分": { indonesia: "menit", sentence: "还有十分钟。(Hái yǒu shí fēnzhōng.) - Masih ada sepuluh menit." },
+                "解决": { indonesia: "menyelesaikan", sentence: "我们要解决这个问题。(Wǒmen yào jiějué zhège wèntí.) - Kita harus menyelesaikan masalah ini." },
+                "试": { indonesia: "mencoba", sentence: "让我试试看。(Ràng wǒ shì shì kàn.) - Biarkan saya mencoba." },
+                "真正": { indonesia: "benar-benar", sentence: "这是真正的友谊。(Zhè shì zhēnzhèng de yǒuyì.) - Ini adalah persahabatan yang benar-benar." },
+                "多么": { indonesia: "betapa", sentence: "多么美丽的花啊！(Duōme měilì de huā a!) - Betapa indahnya bunga ini!" }
+            }
+        };
+
+        // Game state
+        let currentChapter = null;
+        let currentMode = null;
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer = 10;
+        let timerInterval = null;
+        let gameActive = false;
+        let playerInfo = {
+            name: '',
+            class: '',
+            school: ''
+        };
+
+        // Default config
+        const defaultConfig = {
+            game_title: "HSK3 Vocabulary Practice Game",
+            timer_text: "Waktu Tersisa",
+            score_text: "Skor"
+        };
+
+        // Audio context for sound effects
+        let audioContext = null;
+
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function playSound(frequency, duration, type = 'sine') {
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function playCorrectSound() {
+            if (!audioContext) return;
+            playSound(523, 0.2); // C5
+            setTimeout(() => playSound(659, 0.2), 100); // E5
+            setTimeout(() => playSound(784, 0.3), 200); // G5
+        }
+
+        function playIncorrectSound() {
+            if (!audioContext) return;
+            playSound(200, 0.5, 'sawtooth');
+        }
+
+        function showChapterSelection() {
+            const name = document.getElementById('player-name').value.trim();
+            const playerClass = document.getElementById('player-class').value.trim();
+            const school = document.getElementById('player-school').value.trim();
+            
+            if (!name || !playerClass || !school) {
+                alert('Mohon lengkapi semua data identitas!');
+                return;
+            }
+            
+            playerInfo.name = name;
+            playerInfo.class = playerClass;
+            playerInfo.school = school;
+            
+            document.getElementById('identity-screen').style.display = 'none';
+            document.getElementById('menu').style.display = 'block';
+        }
+
+        function backToIdentity() {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('mode-selection').style.display = 'none';
+            document.getElementById('identity-screen').style.display = 'block';
+            currentChapter = null;
+        }
+
+        function selectChapter(chapter) {
+            if (!vocabularyData[chapter] || Object.keys(vocabularyData[chapter]).length === 0) {
+                return;
+            }
+            
+            currentChapter = chapter;
+            document.getElementById('mode-selection').style.display = 'grid';
+        }
+
+        function backToChapterSelection() {
+            document.getElementById('mode-selection').style.display = 'none';
+            currentChapter = null;
+        }
+
+        function showIdentityForm(mode) {
+            currentMode = mode;
+            startGame();
+        }
+
+        function backToModeSelection() {
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('mode-selection').style.display = 'grid';
+            
+            gameActive = false;
+            clearInterval(timerInterval);
+        }
+
+        function startGame() {
+            if (!audioContext) {
+                initAudio();
+            }
+            
+            gameActive = true;
+            score = 0;
+            currentQuestionIndex = 0;
+            
+            // Display player info
+            document.getElementById('display-player-name').textContent = playerInfo.name;
+            document.getElementById('display-player-class').textContent = playerInfo.class;
+            document.getElementById('display-player-school').textContent = playerInfo.school;
+            
+            // Generate questions
+            generateQuestions();
+            
+            // Show game area
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            
+            // Start first question
+            showQuestion();
+        }
+
+        function generateQuestions() {
+            const vocab = vocabularyData[currentChapter];
+            questions = [];
+            
+            // Create questions for all vocabulary
+            Object.keys(vocab).forEach(hanzi => {
+                const vocabItem = vocab[hanzi];
+                questions.push({
+                    hanzi: hanzi,
+                    indonesia: vocabItem.indonesia,
+                    sentence: vocabItem.sentence,
+                    completeSentence: vocabItem.completeSentence
+                });
+            });
+            
+            // Shuffle questions
+            questions = shuffleArray(questions);
+            document.getElementById('total').textContent = questions.length;
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endGame();
+                return;
+            }
+            
+            const question = questions[currentQuestionIndex];
+            const questionElement = document.getElementById('question');
+            const optionsElement = document.getElementById('options');
+            const sentenceElement = document.getElementById('sentence-example');
+            
+            // Hide sentence example
+            sentenceElement.style.display = 'none';
+            
+            let correctAnswer, options;
+            
+            // Set question text and generate options based on mode
+            if (currentMode === 'hanzi-indonesia') {
+                questionElement.textContent = question.hanzi;
+                correctAnswer = question.indonesia;
+                options = generateOptions(correctAnswer, currentMode);
+            } else if (currentMode === 'indonesia-hanzi') {
+                questionElement.textContent = question.indonesia;
+                correctAnswer = question.hanzi;
+                options = generateOptions(correctAnswer, currentMode);
+            } else if (currentMode === 'complete-sentence') {
+                if (question.completeSentence) {
+                    questionElement.textContent = question.completeSentence.question;
+                    correctAnswer = question.completeSentence.answer;
+                    options = shuffleArray([...question.completeSentence.options]);
+                } else {
+                    // Fallback if completeSentence is not available
+                    questionElement.textContent = question.hanzi;
+                    correctAnswer = question.indonesia;
+                    options = generateOptions(correctAnswer, 'hanzi-indonesia');
+                }
+            }
+            
+            // Clear previous options
+            optionsElement.innerHTML = '';
+            
+            // Create option buttons
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(option, correctAnswer, question);
+                optionsElement.appendChild(button);
+            });
+            
+            // Start timer
+            startTimer();
+        }
+
+        function generateOptions(correctAnswer, mode) {
+            const allVocab = vocabularyData[currentChapter];
+            const options = [correctAnswer];
+            
+            // Get all possible answers from current chapter
+            const allAnswers = Object.keys(allVocab).map(hanzi => {
+                return mode === 'hanzi-indonesia' ? allVocab[hanzi].indonesia : hanzi;
+            }).filter(answer => answer !== correctAnswer);
+            
+            // Add random wrong answers from current chapter
+            while (options.length < 6 && allAnswers.length > 0) {
+                const randomIndex = Math.floor(Math.random() * allAnswers.length);
+                const randomAnswer = allAnswers.splice(randomIndex, 1)[0];
+                options.push(randomAnswer);
+            }
+            
+            // If we don't have enough options from current chapter, add from other chapters
+            if (options.length < 6) {
+                const allChapters = Object.keys(vocabularyData);
+                const otherAnswers = [];
+                
+                allChapters.forEach(chapterNum => {
+                    if (chapterNum != currentChapter) {
+                        const chapterVocab = vocabularyData[chapterNum];
+                        Object.keys(chapterVocab).forEach(hanzi => {
+                            const answer = mode === 'hanzi-indonesia' ? chapterVocab[hanzi].indonesia : hanzi;
+                            if (!options.includes(answer)) {
+                                otherAnswers.push(answer);
+                            }
+                        });
+                    }
+                });
+                
+                // Add random answers from other chapters
+                while (options.length < 6 && otherAnswers.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * otherAnswers.length);
+                    const randomAnswer = otherAnswers.splice(randomIndex, 1)[0];
+                    options.push(randomAnswer);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+
+        function selectAnswer(selectedAnswer, correctAnswer, question) {
+            if (!gameActive) return;
+            
+            clearInterval(timerInterval);
+            gameActive = false;
+            
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons and show correct/incorrect
+            optionButtons.forEach(button => {
+                button.onclick = null;
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedAnswer && selectedAnswer !== correctAnswer) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Update score and play sound
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                playCorrectSound();
+            } else {
+                playIncorrectSound();
+            }
+            
+            document.getElementById('score').textContent = score;
+            
+            // Show sentence example
+            const sentenceElement = document.getElementById('sentence-example');
+            document.getElementById('sentence-text').textContent = question.sentence;
+            sentenceElement.style.display = 'block';
+            
+            // Move to next question after delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                gameActive = true;
+                showQuestion();
+            }, 3000);
+        }
+
+        function startTimer() {
+            timer = 10;
+            document.getElementById('timer').textContent = timer;
+            
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timer').textContent = timer;
+                
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    // Auto-select wrong answer when time runs out
+                    const question = questions[currentQuestionIndex];
+                    const correctAnswer = currentMode === 'hanzi-indonesia' ? question.indonesia : question.hanzi;
+                    selectAnswer('', correctAnswer, question);
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('final-score').textContent = `${score}/${questions.length} (${percentage}%)`;
+        }
+
+        function restartGame() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('identity-screen').style.display = 'block';
+            
+            currentChapter = null;
+            currentMode = null;
+            gameActive = false;
+            clearInterval(timerInterval);
+            
+            // Clear form
+            document.getElementById('player-name').value = '';
+            document.getElementById('player-class').value = '';
+            document.getElementById('player-school').value = '';
+            
+            playerInfo = { name: '', class: '', school: '' };
+        }
+
+        // Element SDK implementation
+        async function render(config) {
+            document.getElementById('game-title').textContent = config.game_title || defaultConfig.game_title;
+            document.getElementById('timer-label').textContent = config.timer_text || defaultConfig.timer_text;
+            document.getElementById('score-label').textContent = config.score_text || defaultConfig.score_text;
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["game_title", config.game_title || defaultConfig.game_title],
+                ["timer_text", config.timer_text || defaultConfig.timer_text],
+                ["score_text", config.score_text || defaultConfig.score_text]
+            ]);
+        }
+
+        // Initialize Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                render,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+
+        // Initialize audio on first user interaction
+        document.addEventListener('click', initAudio, { once: true });
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99316aee8708b4ac',t:'MTc2MTIyNDQzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
